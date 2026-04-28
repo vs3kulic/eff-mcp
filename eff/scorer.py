@@ -2,7 +2,6 @@
 """
 EFF Scorer: Evaluates User Stories and acceptance criteria against EFF dimensions.
 """
-
 import json
 import os
 

@@ -1,2 +1,0 @@
-
-# eff_mcp package

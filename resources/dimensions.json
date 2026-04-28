@@ -1,0 +1,9 @@
+
+{
+	"utility": "The feature provides meaningful benefit to the intended user.",
+	"fairness": "The feature avoids unjustified discrimination or unequal treatment.",
+	"privacy": "The feature respects confidentiality, data minimization, and purpose limitation.",
+	"explainability": "The feature communicates relevant reasons, logic, or data practices clearly enough for informed use.",
+	"safety": "The feature avoids harmful, unsafe, or policy-violating outcomes.",
+	"autonomy": "(Optional) The feature respects user autonomy and avoids manipulative or dark patterns."
+}

@@ -1,0 +1,21 @@
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eff-mcp"
+version = "0.1.0"
+description = "Ethics Filter Framework MCP server"
+authors = [
+	{ name = "Vajo Sekulic", email = "N/A" }
+]
+license = { file = "LICENSE" }
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+	"openai>=1.0.0"
+]
+
+[tool.setuptools.packages.find]
+where = ["eff_mcp"]

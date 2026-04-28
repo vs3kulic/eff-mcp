@@ -1,0 +1,11 @@
+
+{
+	"name": "eff-mcp",
+	"description": "Ethics Filter Framework MCP server for requirements engineering and agent workflows.",
+	"entry_point": "eff_mcp.server:main",
+	"resources": [
+		"resources/dimensions.json",
+		"resources/examples.md",
+		"resources/SKILL.md"
+	]
+}

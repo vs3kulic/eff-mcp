@@ -3,11 +3,11 @@
 ## Phase 1 — Framework Design (Product Work)
 
 - [x] Define final list of EFF dimensions (confirm: Utility, Fairness, Privacy, Explainability, Safety)
-- [ ] Write rubric per dimension — what is a PASS, FAIL, borderline?
+- [x] Write rubric per dimension — what is a PASS, FAIL, borderline?
 - [ ] Define severity tiers — same dimension, different weight per context (e.g. health data vs. chat)
 - [ ] Write trigger conditions — when should EFF be invoked by an agent?
-- [ ] Document the harm clause format — exact template syntax agents must follow
-- [ ] Write 3–5 example transformations (baseline → EFF-enhanced User Story)
+- [x] Document the harm clause format — exact template syntax agents must follow
+- [x] Write 3–5 example transformations (baseline → EFF-enhanced User Story)
 
 _Output: `resources/dimensions.json`, `resources/examples.md`, `resources/SKILL.md` (first draft)_
 

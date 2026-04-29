@@ -1,79 +1,170 @@
-# Example EFF-Enhanced User Stories
+# EFF-Enhanced User Story Examples
 
-## Standard User Story
+This document shows how to transform standard user stories into EFF-enhanced stories using the Ethics Filter Framework.
 
-> As a user, I want to receive personalized recommendations, so that I can discover relevant products.
+## How scoring maps to rewrites
 
-## EFF-Enhanced User Story
 
-> As a user, I want to receive personalized recommendations, so that I can discover relevant products, **without exposing my private data or receiving biased suggestions**.
+When `ethics_filter` scores a story:
 
-### Acceptance Criteria (EFF Dimensions)
+- **PASS** = story is ethically sound. No changes needed.
+- **BORDERLINE** = add or tighten a measurable acceptance criterion for that dimension.
+- **FAIL** = add a harm clause to the story and a measurable acceptance criterion for that dimension.
 
-- **Utility**: Recommendations increase user engagement by at least 10% over baseline.
-- **Fairness**: No group receives systematically less relevant recommendations (measured by click-through rate parity).
-- **Privacy**: No personally identifiable information is stored or shared with third parties.
-- **Explainability**: Users can view a summary of why a recommendation was made.
-- **Safety**: Recommendations do not include unsafe or policy-violating products.
+| Scorer result | Rewriter action                                      |
+|--------------|------------------------------------------------------|
+| PASS         | No action required                                   |
+| BORDERLINE   | Add a measurable acceptance criterion                |
+| FAIL         | Add a harm clause + a measurable acceptance criterion|
 
----
+**Example mapping:**
 
-## Another Example
+Scoring result: Privacy = FAIL  
+↓  
+Enhanced story: "...without exposing my private data..."  
+↓  
+Acceptance criteria:  
+- Privacy: Only [list] data fields are stored. No data older than 30 days is retained.
 
-> As a parent, I want parental controls, so that my child can use the app safely, **without being exposed to inappropriate content**.
+## The five EFF dimensions
 
-### Acceptance Criteria
+All acceptance criteria use these five dimensions:
 
-- **Utility**: Parental controls can be enabled/disabled by the parent at any time.
-- **Safety**: Inappropriate content is filtered with 99% accuracy.
-- **Explainability**: Parents receive a report of blocked content and reasons.
-- **Privacy**: Child data is not shared outside the app.
+- **Utility**: Does it deliver real value?
+- **Fairness**: Does it treat all groups equally?
+- **Privacy**: Does it protect personal data?
+- **Explainability**: Can users understand why/how it works?
+- **Safety**: Does it prevent harm?
 
----
+## Pattern
 
-# Appendix A: User Story Repository
+**Standard user story**
 
-## 8.1 User Stories v1
-These stories were implemented as a baseline version (v1) of the Yogi web application.
+> As a [role], I want [feature], so that [benefit].
 
-**US-01: Yoga-Themed Questionnaire**
-As a Yoga practitioner, I want to complete a questionnaire about my preferences so that the system understands my needs.
+**EFF-enhanced user story**
 
-**US-02: Class Recommendations**
-As a Yoga practitioner, I want to receive class recommendations based on my questionnaire responses so that I can easily find suitable classes.
+> As a [role], I want [feature], so that [benefit], **without [harm clause]**.
 
-**US-03: AI-Generated Pro-Tips**
-As a Yoga practitioner, I want to receive personalized pro-tips based on my questionnaire responses so that I can enhance my practice.
+### Acceptance criteria (use 2-5 dimensions)
 
-**US-04: Newsletter Subscription**
-As a Yoga practitioner, I want to receive the latest updates related to the yoga studio so that I can stay informed about studio-related events.
+- Utility: [measurable benefit]
+- Fairness: [equality check]
+- Privacy: [data limits]
+- Explainability: [understanding proof]
+- Safety: [harm prevention]
 
----
+## Example 1: Personalized recommendations
 
-## 8.5 User Stories v2 (EFF-Enhanced)
+**Standard user story**
 
-**US-02 v2: Course Recommendations**
-As a Yoga practitioner, I want to receive class recommendations based on my questionnaire responses so that I can easily find suitable classes without being steered toward inappropriate classes through biased algorithms.
+> As a user, I want personalized recommendations, so that I can discover relevant products.
 
-*Acceptance Criteria:*
-- **Utility:** At least 80% of recommended classes are rated ≥ 4/5 by users in a post-session feedback survey (satisfaction).
-- **Safety:** For users reporting injuries or limitations (e.g., back pain, pregnancy, joint issues), classes flagged as contraindicated for a reported condition are never recommended.
-- **Explainability:** The recommendation screen includes a brief explanation such as “Recommended based on your goals, experience, and limitations” plus a description justifying the selection.
+**Scoring result**
 
-**US-03 v2: AI-Generated Pro-Tips**
-As a Yoga practitioner, I want to receive personalized pro-tips based on my questionnaire responses so that I can enhance my practice without manipulation through psychologically persuasive content serving business goals.
+Privacy: FAIL (collects unnecessary personal data)  
+Fairness: BORDERLINE (may favor certain demographics)
 
-*Acceptance Criteria:*
-- **Utility:** The tips achieve a relevance score of ≥ 0.75 based on distinct user feedback (thumbs up vs. thumbs down).
-- **Safety:** All generated content passes through a safety filter that blocks advice encouraging pushing through pain or offering medical diagnoses; testing demonstrates a block rate of ≥ 99% for unsafe tips.
-- **Explainability:** Every tip is explicitly visually tagged (e.g., “AI-Generated”) to ensure users distinguish automated suggestions from human instructor advice.
-- **Autonomy:** Generated tips are strictly limited to yoga technique or mindset advice. No content includes calls to action for purchasing subscriptions, merchandise, or unlocking premium features (upselling).
+**EFF-enhanced user story**
 
-**US-04 v2: Newsletter Signup**
-As a Yoga practitioner, I want to receive the latest updates related to the yoga studio so that I can stay informed about studio-related events without manipulation via dark patterns or data misuse.
+> As a user, I want personalized recommendations, so that I can discover relevant products, **without exposing my private data or receiving biased suggestions**.
 
-*Acceptance Criteria:*
-- **Fairness:** Essential application information (pricing, feature overview, privacy policy) is fully accessible to the user without requiring a newsletter subscription.
-- **Privacy:** The subscription checkbox is unchecked by default (opt-in). If a user initiates signup but does not confirm (double opt-in), their email address is automatically and permanently deleted from the system within 30 days.
-- **Explainability:** The signup form explicitly lists the types of content to be sent (e.g., “Weekly tips,” “Product updates”). User testing confirms that at least 85% of participants correctly understand the nature and frequency of the emails before signing up.
-- **Safety:** The interface avoids manipulative design (dark patterns); the option to decline or skip is presented with neutral language and equal visual prominence to the signup button (e.g., no “confirmshaming”).
+### Acceptance criteria
+
+- **Utility**: At least 80% of recommendations receive a click-through or positive rating.
+- **Fairness**: No demographic group receives recommendations with < 70% relevance (measured by CTR parity).
+- **Privacy**: Only anonymized behavior data is used. No PII is stored or shared.
+- **Explainability**: Users can tap "Why this?" to see a 1-sentence explanation.
+
+## Example 2: Yoga questionnaire
+
+**Standard user story**
+
+> As a Yoga practitioner, I want to complete a questionnaire about my preferences, so that the system understands my needs.
+
+**Scoring result**
+
+Privacy: FAIL (health data retention unclear)  
+Explainability: FAIL (no data purpose disclosure)
+
+**EFF-enhanced user story**
+
+> As a Yoga practitioner, I want to complete a questionnaire about my preferences, so that the system understands my needs, **without my sensitive health data being used beyond the stated purpose**.
+
+### Acceptance criteria
+
+- **Privacy**: Only essential fields collected. Data deleted after 90 days.
+- **Privacy**: Pre-questionnaire notice lists data purpose and retention.
+- **Explainability**: 85% of users correctly identify data purpose in a post-survey.
+- **Utility**: 80% questionnaire completion rate.
+
+## Example 3: Yoga class recommendations
+
+**Standard user story**
+
+> As a Yoga practitioner, I want class recommendations based on my questionnaire, so that I can find suitable classes.
+
+**Scoring result**
+
+Safety: FAIL (no injury contraindication check)  
+Explainability: BORDERLINE (no recommendation reasoning)
+
+**EFF-enhanced user story**
+
+> As a Yoga practitioner, I want class recommendations based on my questionnaire, so that I can find suitable classes, **without being steered toward contraindicated classes**.
+
+### Acceptance criteria
+
+- **Safety**: 0 contraindicated classes recommended for users reporting injuries.
+- **Utility**: 80% of recommendations rated ≥ 4/5 post-session.
+- **Explainability**: Each recommendation shows "Based on your [goals/level/injuries]".
+
+## Example 4: AI pro-tips
+
+**Standard user story**
+
+> As a Yoga practitioner, I want personalized pro-tips based on my questionnaire, so that I can enhance my practice.
+
+**Scoring result**
+
+Safety: FAIL (risk of unsafe advice)  
+Explainability: FAIL (no AI disclosure)
+
+**EFF-enhanced user story**
+
+> As a Yoga practitioner, I want personalized pro-tips based on my questionnaire, so that I can enhance my practice, **without receiving unsafe advice or hidden AI manipulation**.
+
+### Acceptance criteria
+
+- **Safety**: 99% of unsafe tips (pain encouragement, medical advice) blocked by filter.
+- **Explainability**: All tips visibly tagged "AI-generated".
+- **Utility**: ≥ 75% thumbs-up relevance rating.
+
+## Example 5: Newsletter signup
+
+**Standard user story**
+
+> As a Yoga practitioner, I want to receive studio updates, so that I can stay informed.
+
+**Scoring result**
+
+Privacy: FAIL (opt-out unclear)  
+Safety: BORDERLINE (dark pattern risk)
+
+**EFF-enhanced user story**
+
+> As a Yoga practitioner, I want to receive studio updates, so that I can stay informed, **without data misuse or manipulative signup**.
+
+### Acceptance criteria
+
+- **Privacy**: Checkbox unchecked by default. Unconfirmed signups deleted in 30 days.
+- **Safety**: Decline option has equal visual weight to signup.
+- **Explainability**: Form lists exact email content types.
+
+## Quick checklist
+
+For any user story:
+1. Run `ethics_filter` → note FAIL/BORDERLINE dimensions.
+2. Add harm clause for each failed dimension.
+3. Write 1-2 acceptance criteria per failed dimension.
+4. Use measurable thresholds where possible.

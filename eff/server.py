@@ -37,6 +37,17 @@ def eff_rewrite(user_story: str, scoring_result: dict) -> dict:
     return rewrite_story(user_story, scoring_result)
 
 
+@mcp.tool()
+def list_resources() -> dict:
+    """List available EFF MCP resources and their descriptions."""
+    return {
+        "resources": [
+            {"uri": "eff://dimensions", "description": "EFF rubric and dimension definitions (JSON)"},
+            {"uri": "eff://skill", "description": "EFF skill instructions and workflow (Markdown)"},
+            {"uri": "eff://examples", "description": "EFF worked examples and templates (Markdown)"}
+        ]
+    }
+
 #################
 # MCP Resources #
 #################

@@ -129,7 +129,53 @@ EFF returns the enhanced user story and acceptance criteria as structured data, 
   - If there is a Privacy rule, the code might ask users for consent or delete old data.
   - If there is an Explainability rule, the code might show a message explaining how it works or add helpful comments.
 
-This way, any code you generate from EFF-checked stories will already have important ethical protections built in.
+
+### Example: Using EFF Output for Code Generation
+
+Here’s a simple JavaScript example showing how to use EFF output to generate code with an LLM (like Claude):
+
+```js
+// 1. Run the EFF filter on your user story
+const storyResponse = await fetch("https://your-eff-api/ethics_filter", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    user_story: "As a Yoga practitioner, I want to receive the latest updates related to the yoga studio so that I can stay informed about studio-related events."
+  })
+});
+
+const { results, summary } = await storyResponse.json();
+
+// 2. Build a prompt from the EFF output
+const effPrompt = `
+Generate a React component based on the following requirements.
+
+User Story: As a Yoga practitioner, I want to receive studio updates so I can stay informed.
+
+Acceptance Criteria (from EFF analysis):
+- Fairness: Updates must be accessible to all user groups regardless of device or ability.
+- Privacy: Disclose what data is collected, how it is delivered, and how long it is retained.
+- Explainability: Make clear to the user what sources and criteria determine the updates shown.
+
+Return only the component code.
+`;
+
+// 3. Send to Claude API for code generation
+const codeResponse = await fetch("https://api.anthropic.com/v1/messages", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    model: "claude-sonnet-4-20250514",
+    max_tokens: 1000,
+    messages: [{ role: "user", content: effPrompt }]
+  })
+});
+
+const { content } = await codeResponse.json();
+console.log(content[0].text); // Your ethically-informed component
+```
+
+> **Note:** Replace the API endpoints with your actual EFF server and Claude API URLs. Handle API keys securely.
 
 ---
 

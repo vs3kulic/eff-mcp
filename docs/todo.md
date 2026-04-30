@@ -40,14 +40,14 @@ _Output: working `scorer.py` you can test with `python` directly_
 
 ## Phase 4 — MCP Server (Wrap the Scorer)
 
-- [ ] Create `eff_mcp/server.py` using FastMCP
-- [ ] Load `dimensions.json` at startup
-- [ ] Expose `ethics_filter(content, dimensions)` as an MCP tool
-- [ ] Expose `eff://dimensions` as an MCP resource
-- [ ] Expose `eff://skill` as an MCP resource (serves `SKILL.md`)
-- [ ] Expose `eff://examples` as an MCP resource (serves `examples.md`)
-- [ ] Test: run server locally via `python -m eff_mcp.server`
-- [ ] Test: connect to Claude Desktop or another MCP host via stdio config
+- [x] Create `eff_mcp/server.py` using FastMCP
+- [x] Load `dimensions.json` at startup
+- [x] Expose `ethics_filter(content, dimensions)` as an MCP tool
+- [x] Expose `eff://dimensions` as an MCP resource
+- [x] Expose `eff://skill` as an MCP resource (serves `SKILL.md`)
+- [x] Expose `eff://examples` as an MCP resource (serves `examples.md`)
+- [x] Test: run server locally via `python -m eff_mcp.server`
+- [x] Test: connect to Claude Desktop or another MCP host via stdio config
 
 _Output: working local MCP server, testable in a real agent environment_
 

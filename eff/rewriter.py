@@ -23,7 +23,7 @@ def rewrite_story(user_story: str, scoring_result: dict) -> dict:
         "explainability": "Explainability",
         "safety": "Safety",
     }
-    fail_reasons = []
+    harm_reasons = []
     needs_improvement_criteria = []
     fail_criteria = []
 
@@ -35,17 +35,18 @@ def rewrite_story(user_story: str, scoring_result: dict) -> dict:
         result = dim_result.get("result")
         reason = dim_result.get("reason", "")
         if result == "fail":
-            fail_reasons.append((dim_label, reason))
+            harm_reasons.append((dim_label, reason))
             fail_criteria.append((dim_label, reason))
         elif result == "Needs Improvement":
+            harm_reasons.append((dim_label, reason))
             needs_improvement_criteria.append((dim_label, reason))
 
-    # --- Step 3: Build harm clause (if any FAIL) ---
+    # --- Step 3: Build harm clause (if any FAIL or Needs Improvement) ---
     harm_clause = None
-    if fail_reasons:
-        # Combine all fail reasons into a single phrase
+    if harm_reasons:
+        # Combine all harm reasons into a single phrase
         phrases = []
-        for dim_label, reason in fail_reasons:
+        for dim_label, reason in harm_reasons:
             # Synthesize a short harm phrase from the reason
             phrases.append(reason.strip().rstrip("."))
         # Join with 'or' if multiple

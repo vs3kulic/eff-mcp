@@ -56,22 +56,23 @@ Rewrites a standard agile user story into an EFF-enhanced user story using the s
 For each of the five dimensions (Utility, Fairness, Privacy, Explainability, Safety), note the result:
 
 - `pass` → no action needed for this dimension
-- `Needs Improvement` → add a measurable acceptance criterion for this dimension
+- `Needs Improvement` → add a harm clause to the story stem AND a measurable acceptance criterion for this dimension
 - `fail` → add a harm clause to the story stem AND a measurable acceptance criterion for this dimension
 
 ### Step 2 — Write the harm clause
 
 
-A harm clause is a short phrase appended to the story stem after the benefit clause, but **only for dimensions that scored `fail`**:
+
+A harm clause is a short phrase appended to the story stem after the benefit clause, for **any dimension that scored `Needs Improvement` or `fail`**:
 
 > "...so that [benefit], **without [harm]**."
 
 Rules for writing the harm clause:
-- Only add a harm clause if at least one dimension scored `fail`.
-- One harm clause per story, even if multiple dimensions failed — combine them into a single, readable phrase.
+- Add a harm clause if at least one dimension scored `Needs Improvement` or `fail`.
+- One harm clause per story, even if multiple dimensions are flagged — combine them into a single, readable phrase.
 - Ground the clause in the specific reasons given by the scorer, do not invent new risks.
 - Keep it concise — one sentence, plain language.
-- Address the most severely failed dimension first.
+- Address the most severe or relevant dimension first.
 
 **Examples:**
 - Privacy FAIL → *"without my sensitive health data being used beyond the stated purpose"*
@@ -116,7 +117,6 @@ Only include dimensions that scored `fail` or `Needs Improvement`. Do not add ac
 ## What to avoid
 
 - **Do not invent risks** not flagged by the scorer. The harm clause and acceptance criteria must be traceable to the scoring result.
-- **Do not add a harm clause** for `Needs Improvement` dimensions — only for `fail`.
 - **Do not use vague language** in acceptance criteria — "should be transparent" is not testable; "users see a privacy notice before submitting" is.
 - **Do not repeat the scorer's reasoning verbatim** — synthesize it into plain, actionable language.
 - **Do not rename the five dimensions** — always use: Utility, Fairness, Privacy, Explainability, Safety.
@@ -134,7 +134,7 @@ Only include dimensions that scored `fail` or `Needs Improvement`. Do not add ac
 | Scorer result      | Rewriter action                                      |
 |-------------------|------------------------------------------------------|
 | PASS              | No action required                                   |
-| Needs Improvement | Add a measurable acceptance criterion                |
+| Needs Improvement | Add a harm clause + a measurable acceptance criterion|
 | FAIL              | Add a harm clause + a measurable acceptance criterion|
 
 

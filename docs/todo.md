@@ -4,7 +4,6 @@
 
 - [x] Define final list of EFF dimensions (confirm: Utility, Fairness, Privacy, Explainability, Safety)
 - [x] Write rubric per dimension — what is a PASS, FAIL, borderline?
-- [ ] Define severity tiers — same dimension, different weight per context (e.g. health data vs. chat)
 - [x] Write trigger conditions — when should EFF be invoked by an agent?
 - [x] Document the harm clause format — exact template syntax agents must follow
 - [x] Write 3–5 example transformations (baseline → EFF-enhanced User Story)
@@ -30,7 +29,7 @@ _This is pure product/BA work. No coding required._
 - [x] Implement `score_dimension(content, dimension, rubric)` as a standalone function
 - [x] Use OpenAI client (or compatible) — model configurable via env var
 - [x] Return structured JSON: `{ "pass": bool, "confidence": float, "reason": string }`
-- [ ] Test scorer in isolation with `python scorer.py` — no MCP involved yet
+- [x] Test scorer in isolation with `python scorer.py` — no MCP involved yet
 - [x] Iterate on prompts until scoring feels consistent and defensible
 - [ ] Handle errors gracefully (API timeout, malformed response, missing key)
 
@@ -65,11 +64,11 @@ _Output: working local MCP server, testable in a real agent environment_
 
 ## Phase 6 — Quality and Robustness
 
-- [ ] Write at least one test per dimension in `tests/`
-- [ ] Test edge cases: empty story, missing rubric key, API failure
-- [ ] Confirm scorer returns valid JSON even when model output is malformed
-- [ ] Confirm server starts cleanly with missing optional env vars
-- [ ] Confirm server fails clearly with missing required env vars (not silently)
+- [x] Write at least one test per dimension in `tests/`
+- [x] Test edge cases: empty story, missing rubric key, API failure
+- [x] Confirm scorer returns valid JSON even when model output is malformed
+- [x] Confirm server starts cleanly with missing optional env vars
+- [x] Confirm server fails clearly with missing required env vars (not silently)
 
 ---
 

@@ -1,8 +1,12 @@
 
 {
+	"namespace": "io.github.vajosekulic/eff-mcp",
 	"name": "eff-mcp",
+	"version": "0.1.0",
 	"description": "Ethics Filter Framework MCP server for requirements engineering and agent workflows.",
-	"entry_point": "eff_mcp.server:main",
+	"license": "MIT",
+	"repository": "https://github.com/vs3kulic/eff-mcp",
+	"entry_point": "eff.server",
 	"resources": [
 		"resources/dimensions.json",
 		"resources/examples.md",

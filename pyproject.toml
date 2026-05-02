@@ -8,14 +8,17 @@ name = "eff-mcp"
 version = "0.1.0"
 description = "Ethics Filter Framework MCP server"
 authors = [
-	{ name = "Vajo Sekulic", email = "N/A" }
+	{ name = "Vajo Sekulic" }
 ]
 license = { file = "LICENSE" }
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.11"
 dependencies = [
-	"openai>=1.0.0"
+	"openai>=1.0.0",
+	"fastmcp>=0.1.0",
+	"pydantic>=2.0.0",
+	"python-dotenv>=1.0.0"
 ]
 
 [tool.setuptools.packages.find]
-where = ["eff_mcp"]
+where = ["."]

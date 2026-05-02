@@ -55,14 +55,11 @@ _Output: working local MCP server, testable in a real agent environment_
 
 ## Phase 5 — Configuration and Packaging
 
-- [ ] All config via environment variables:
+- [x] Config via environment variables:
   - `OPENAI_API_KEY` (required)
-  - `OPENAI_MODEL` (optional, default: `gpt-4o-mini`)
-  - `OPENAI_BASE_URL` (optional, for compatible providers)
-- [ ] Write `pyproject.toml` — package name, entrypoint, dependencies
-- [ ] Write `server.json` — MCP registry manifest with namespace `io.github.yourusername/eff-mcp`
-- [ ] Confirm entrypoint: `python -m eff_mcp.server` works after `pip install -e .`
-- [ ] Add `.env.example` file documenting required env vars
+- [x] Write `pyproject.toml` — package name, entrypoint, dependencies
+- [x] Write `server.json` — MCP registry manifest with namespace `io.github.yourusername/eff-mcp`
+- [x] Confirm entrypoint: `python -m eff.server` works after `pip install -e .`
 
 ---
 

@@ -75,11 +75,10 @@ _Output: working local MCP server, testable in a real agent environment_
 
 ## Phase 7 — Documentation Finalization
 
-- [ ] Update README Quickstart with final package name and exact commands
-- [ ] Fix research citation — verify author name and year before publishing
-- [ ] Add `CONTRIBUTING.md` if open to external contributions
-- [ ] Add `LICENSE` file
-- [ ] Add `CHANGELOG.md` (start with `v0.1.0`)
+- [x] Update README Quickstart with final package name and exact commands
+- [x] Fix research citation — verify author name and year before publishing
+- [x] Add `CONTRIBUTING.md` if open to external contributions
+- [x] Add `LICENSE` file
 
 ---
 

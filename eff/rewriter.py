@@ -5,6 +5,7 @@ import argparse
 import json
 from typing import Dict, List
 
+
 def rewrite_story(user_story: str, scoring_result: dict) -> dict:
     """
     Rewrite a user story into an EFF-enhanced version based on the scoring result.
@@ -15,20 +16,20 @@ def rewrite_story(user_story: str, scoring_result: dict) -> dict:
     if not isinstance(results, dict):
         raise ValueError("Invalid scoring_result: missing 'results' dict")
 
-    # Map dimension names to readable form
-    dim_names = {
-        "utility": "Utility",
-        "fairness": "Fairness",
-        "privacy": "Privacy",
-        "explainability": "Explainability",
-        "safety": "Safety",
-    }
+    dim_names = [
+        "utility",
+        "fairness",
+        "privacy",
+        "explainability",
+        "safety",
+    ]
     harm_reasons = []
     needs_improvement_criteria = []
     fail_criteria = []
 
     # --- Step 2: Collect harm clause and acceptance criteria ---
-    for dim, dim_label in dim_names.items():
+    for dim in dim_names:
+        dim_label = dim.title()
         dim_result = results.get(dim)
         if not dim_result:
             continue

@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 """This module contains the FastMCP server implementation for the EFF scorer."""
 import sys
-import os
 from pathlib import Path
 from fastmcp import FastMCP
 
-sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
+sys.path.insert(0, Path(__file__).resolve().parent.parent.__str__())
 
 from eff.scorer import score_story, DEFAULT_DIMENSIONS_PATH, DEFAULT_MODEL
 from eff.rewriter import rewrite_story

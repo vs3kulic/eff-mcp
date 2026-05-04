@@ -135,11 +135,11 @@ def call_model(content: str, dimensions: dict, model: str = DEFAULT_MODEL) -> Sc
     passed = needs_improvement = failed = 0
     for x in parsed.model_dump().values():
         match x["result"]:
-            case "passed":
+            case "pass":
                 passed += 1
-            case "needs_improvement":
+            case "Needs Improvement":
                 needs_improvement += 1
-            case "failed":
+            case "fail":
                 failed += 1
 
     summary = ScoreSummary(

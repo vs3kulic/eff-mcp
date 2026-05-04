@@ -3,7 +3,6 @@
 
 import argparse
 import json
-from typing import Dict, List
 
 
 def rewrite_story(user_story: str, scoring_result: dict) -> dict:
@@ -54,7 +53,7 @@ def rewrite_story(user_story: str, scoring_result: dict) -> dict:
         harm_clause = " or ".join(phrases)
 
     # --- Step 4: Build acceptance criteria ---
-    acceptance_criteria: List[Dict[str, str]] = []
+    acceptance_criteria: list[dict[str, str]] = []
     for dim_label, reason in fail_criteria + needs_improvement_criteria:
         # Synthesize a measurable/testable criterion from the reason (placeholder)
         criterion = f"Address the following: {reason.strip()}"

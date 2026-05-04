@@ -132,10 +132,20 @@ def call_model(content: str, dimensions: dict, model: str = DEFAULT_MODEL) -> Sc
     if parsed is None:
         raise ValueError("Model returned no parsed structured output.")
 
+    passed = needs_improvement = failed = 0
+    for x in parsed.model_dump().values():
+        match x["result"]:
+            case "passed":
+                passed += 1
+            case "needs_improvement":
+                needs_improvement += 1
+            case "failed":
+                failed += 1
+
     summary = ScoreSummary(
-        passed=sum(1 for x in parsed.model_dump().values() if x["result"] == "pass"),
-        needs_improvement=sum(1 for x in parsed.model_dump().values() if x["result"] == "Needs Improvement"),
-        failed=sum(1 for x in parsed.model_dump().values() if x["result"] == "fail"),
+        passed=passed,
+        needs_improvement=needs_improvement,
+        failed=failed,
     )
 
     return ScoreResponse(
@@ -148,7 +158,7 @@ def call_model(content: str, dimensions: dict, model: str = DEFAULT_MODEL) -> Sc
 
 def score_story(
     content: str,
-    dimensions_path: str = DEFAULT_DIMENSIONS_PATH,
+    dimensions_path: str = str(DEFAULT_DIMENSIONS_PATH),
     model: str = DEFAULT_MODEL,
 ) -> dict:
     dimensions = load_dimensions(dimensions_path)

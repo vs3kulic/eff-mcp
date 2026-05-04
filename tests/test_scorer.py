@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 import json
-import os
 import pytest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -29,7 +28,7 @@ STORY = "As a user I want personalised recommendations so I can find relevant co
 
 @pytest.fixture(scope="session")
 def dimensions():
-    return load_dimensions(DIMENSIONS_PATH)
+    return load_dimensions(str(DIMENSIONS_PATH))
 
 
 @pytest.fixture

@@ -148,7 +148,7 @@ def call_model(content: str, dimensions: dict, model: str = DEFAULT_MODEL) -> Sc
 
 def score_story(
     content: str,
-    dimensions_path: str = DEFAULT_DIMENSIONS_PATH,
+    dimensions_path: str = str(DEFAULT_DIMENSIONS_PATH),
     model: str = DEFAULT_MODEL,
 ) -> dict:
     dimensions = load_dimensions(dimensions_path)

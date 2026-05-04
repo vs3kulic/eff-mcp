@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
 """This module contains the FastMCP server implementation for the EFF scorer."""
-import sys
 from pathlib import Path
+
 from fastmcp import FastMCP
 
-sys.path.insert(0, Path(__file__).resolve().parent.parent.__str__())
-
-from eff.scorer import score_story, DEFAULT_DIMENSIONS_PATH, DEFAULT_MODEL
-from eff.rewriter import rewrite_story
+from .rewriter import rewrite_story
+from .scorer import DEFAULT_DIMENSIONS_PATH, DEFAULT_MODEL, score_story
 
 # Resource file paths
 RESOURCES_PATH = Path(__file__).resolve().parent.parent / "resources"
+
+
+def read_resource(filename: str) -> str:
+    return (RESOURCES_PATH / filename).read_text(encoding="utf-8")
 
 
 mcp = FastMCP("eff-mcp")
@@ -41,9 +43,12 @@ def list_resources() -> dict:
     """List available EFF MCP resources and their descriptions."""
     return {
         "resources": [
-            {"uri": "eff://dimensions", "description": "EFF rubric and dimension definitions (JSON)"},
-            {"uri": "eff://skill", "description": "EFF skill instructions and workflow (Markdown)"},
-            {"uri": "eff://examples", "description": "EFF worked examples and templates (Markdown)"}
+            {"uri": "eff://dimensions",
+             "description": "EFF rubric and dimension definitions (JSON)"},
+            {"uri": "eff://skill",
+             "description": "EFF skill instructions and workflow (Markdown)"},
+            {"uri": "eff://examples",
+             "description": "EFF worked examples and templates (Markdown)"}
         ]
     }
 
@@ -54,22 +59,19 @@ def list_resources() -> dict:
 @mcp.resource("eff://dimensions")
 def get_dimensions():
     """Serve the EFF dimensions.json as an MCP resource."""
-    with open(RESOURCES_PATH / "dimensions.json", "r", encoding="utf-8") as f:
-        return f.read()
+    return read_resource("dimensions.json")
 
 
 @mcp.resource("eff://skill")
 def get_skill():
     """Serve the EFF SKILL.md as an MCP resource."""
-    with open(RESOURCES_PATH / "SKILL.md", "r", encoding="utf-8") as f:
-        return f.read()
+    return read_resource("SKILL.md")
 
 
 @mcp.resource("eff://examples")
 def get_examples():
     """Serve the EFF examples.md as an MCP resource."""
-    with open(RESOURCES_PATH / "examples.md", "r", encoding="utf-8") as f:
-        return f.read()
+    return read_resource("examples.md")
 
 
 if __name__ == "__main__":

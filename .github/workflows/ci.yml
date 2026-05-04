@@ -25,7 +25,7 @@ jobs:
         run: pytest
 
   build:
-    if: github.event_name == 'push' && needs.test.result == 'success'
+    if: github.event_name == 'push' && success()
     needs: test
     runs-on: ubuntu-latest
     steps:

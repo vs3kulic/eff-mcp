@@ -6,19 +6,17 @@ import json
 import pytest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
-
 from eff.scorer import (
     DimensionScore,
     ScoreResults,
-    ScoreSummary,
-    ScoreResponse,
+    EFFOutput,
     build_messages,
     load_dimensions,
     call_model,
-    score_story,
+    build_client
 )
 
-DIMENSIONS_PATH = Path(__file__).resolve().parent.parent / "resources" / "dimensions.json"
+DIMENSIONS_PATH = Path(__file__).resolve().parent.parent / "eff" / "resources" / "dimensions.json"
 
 STORY = "As a user I want personalised recommendations so I can find relevant content."
 
@@ -35,7 +33,11 @@ def dimensions():
 def all_pass_results():
     def make_score(result: str) -> DimensionScore:
         return DimensionScore(result=result, confidence=0.9, reason="Test reason.")
-    return ScoreResults(**{dim: make_score("pass") for dim in ("utility", "fairness", "privacy", "explainability", "safety")})
+    return EFFOutput(
+        **{dim: make_score("pass") for dim in ("utility", "fairness", "privacy", "explainability", "safety")},
+        enhanced_story=STORY,
+        acceptance_criteria=[],
+    )
 
 
 @pytest.fixture
@@ -57,10 +59,10 @@ def make_score(result: str) -> DimensionScore:
     return DimensionScore(result=result, confidence=0.9, reason="Test reason.")
 
 
-def make_results(**overrides) -> ScoreResults:
+def make_results(**overrides) -> EFFOutput:
     defaults = {dim: make_score("pass") for dim in ("utility", "fairness", "privacy", "explainability", "safety")}
     defaults.update(overrides)
-    return ScoreResults(**defaults)
+    return EFFOutput(**defaults, enhanced_story=STORY, acceptance_criteria=[])
 
 
 def mock_response(results: ScoreResults) -> MagicMock:
@@ -182,6 +184,5 @@ def test_call_model_raises_on_no_parsed_output(dimensions):
 
 def test_build_client_raises_without_api_key(monkeypatch):
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
-    from eff.scorer import build_client
     with pytest.raises(EnvironmentError, match="OPENAI_API_KEY"):
         build_client()

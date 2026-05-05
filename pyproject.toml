@@ -20,5 +20,19 @@ dependencies = [
 	"python-dotenv>=1.0.0"
 ]
 
+[project.optional-dependencies]
+rag = ["supabase>=2.0.0"]
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+eff-mcp = "eff.server:main"
+
 [tool.setuptools.packages.find]
 where = ["."]
+include = ["eff*"]
+
+[tool.setuptools.package-data]
+"eff.resources" = ["*.json", "*.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

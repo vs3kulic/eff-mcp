@@ -8,8 +8,8 @@
 	"repository": "https://github.com/vs3kulic/eff-mcp",
 	"entry_point": "eff.server",
 	"resources": [
-		"resources/dimensions.json",
-		"resources/examples.md",
-		"resources/SKILL.md"
+		"eff/resources/dimensions.json",
+		"eff/resources/examples.md",
+		"eff/resources/SKILL.md"
 	]
 }

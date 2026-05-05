@@ -4,26 +4,25 @@ This document shows how to transform standard user stories into EFF-enhanced sto
 
 ## How scoring maps to rewrites
 
-
 When `ethics_filter` scores a story:
 
-- **PASS** = story is ethically sound. No changes needed.
-- **BORDERLINE** = add or tighten a measurable acceptance criterion for that dimension.
-- **FAIL** = add a harm clause to the story and a measurable acceptance criterion for that dimension.
+- **pass** — story is ethically sound on this dimension. No changes needed.
+- **Needs Improvement** — add a measurable acceptance criterion for that dimension.
+- **fail** — add a harm clause to the story AND a measurable acceptance criterion for that dimension.
 
-| Scorer result | Rewriter action                                      |
-|--------------|------------------------------------------------------|
-| PASS         | No action required                                   |
-| BORDERLINE   | Add a measurable acceptance criterion                |
-| FAIL         | Add a harm clause + a measurable acceptance criterion|
+| Scorer result      | Rewriter action                                       |
+|--------------------|-------------------------------------------------------|
+| pass               | No action required                                    |
+| Needs Improvement  | Add a measurable acceptance criterion                 |
+| fail               | Add a harm clause + a measurable acceptance criterion |
 
 **Example mapping:**
 
-Scoring result: Privacy = FAIL  
-↓  
-Enhanced story: "...without exposing my private data..."  
-↓  
-Acceptance criteria:  
+Scoring result: Privacy = fail
+↓
+Enhanced story: "...without exposing my private data..."
+↓
+Acceptance criteria:
 - Privacy: Only [list] data fields are stored. No data older than 30 days is retained.
 
 ## The five EFF dimensions
@@ -46,7 +45,7 @@ All acceptance criteria use these five dimensions:
 
 > As a [role], I want [feature], so that [benefit], **without [harm clause]**.
 
-### Acceptance criteria (use 2-5 dimensions)
+### Acceptance criteria (for each non-passing dimension)
 
 - Utility: [measurable benefit]
 - Fairness: [equality check]
@@ -62,8 +61,8 @@ All acceptance criteria use these five dimensions:
 
 **Scoring result**
 
-Privacy: FAIL (collects unnecessary personal data)  
-Fairness: BORDERLINE (may favor certain demographics)
+Privacy: fail (collects unnecessary personal data)
+Fairness: Needs Improvement (may favor certain demographics)
 
 **EFF-enhanced user story**
 
@@ -84,8 +83,8 @@ Fairness: BORDERLINE (may favor certain demographics)
 
 **Scoring result**
 
-Privacy: FAIL (health data retention unclear)  
-Explainability: FAIL (no data purpose disclosure)
+Privacy: fail (health data retention unclear)
+Explainability: fail (no data purpose disclosure)
 
 **EFF-enhanced user story**
 
@@ -106,8 +105,8 @@ Explainability: FAIL (no data purpose disclosure)
 
 **Scoring result**
 
-Safety: FAIL (no injury contraindication check)  
-Explainability: BORDERLINE (no recommendation reasoning)
+Safety: fail (no injury contraindication check)
+Explainability: Needs Improvement (no recommendation reasoning)
 
 **EFF-enhanced user story**
 
@@ -127,8 +126,8 @@ Explainability: BORDERLINE (no recommendation reasoning)
 
 **Scoring result**
 
-Safety: FAIL (risk of unsafe advice)  
-Explainability: FAIL (no AI disclosure)
+Safety: fail (risk of unsafe advice)
+Explainability: fail (no AI disclosure)
 
 **EFF-enhanced user story**
 
@@ -148,8 +147,8 @@ Explainability: FAIL (no AI disclosure)
 
 **Scoring result**
 
-Privacy: FAIL (opt-out unclear)  
-Safety: BORDERLINE (dark pattern risk)
+Privacy: fail (opt-out unclear)
+Safety: Needs Improvement (dark pattern risk)
 
 **EFF-enhanced user story**
 
@@ -164,7 +163,6 @@ Safety: BORDERLINE (dark pattern risk)
 ## Quick checklist
 
 For any user story:
-1. Run `ethics_filter` → note FAIL/BORDERLINE dimensions.
-2. Add harm clause for each failed dimension.
-3. Write 1-2 acceptance criteria per failed dimension.
-4. Use measurable thresholds where possible.
+1. Call `ethics_filter(user_story)`.
+2. For each `fail` or `Needs Improvement` dimension: include the acceptance criterion in the Definition of Done.
+3. Use the `enhanced_story` to replace the original in the backlog.

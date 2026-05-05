@@ -8,7 +8,7 @@
 - [x] Document the harm clause format — exact template syntax agents must follow
 - [x] Write 3–5 example transformations (baseline → EFF-enhanced User Story)
 
-_Output: `resources/dimensions.json`, `resources/examples.md`, `resources/SKILL.md` (first draft)_
+_Output: `eff/resources/dimensions.json`, `eff/resources/examples.md`, `eff/resources/SKILL.md`_
 
 ---
 
@@ -25,27 +25,27 @@ _This is pure product/BA work. No coding required._
 
 ## Phase 3 — Scorer (Plain Python, No MCP Yet)
 
-- [x] Create `eff_mcp/scorer.py`
-- [x] Implement `score_dimension(content, dimension, rubric)` as a standalone function
-- [x] Use OpenAI client (or compatible) — model configurable via env var
-- [x] Return structured JSON: `{ "pass": bool, "confidence": float, "reason": string }`
-- [x] Test scorer in isolation with `python scorer.py` — no MCP involved yet
+- [x] Create `eff/scorer.py`
+- [x] Implement `score_story(content, dimensions_path, model)` as a standalone function
+- [x] Use OpenAI client (or compatible) — model configurable via `OPENAI_MODEL` env var
+- [x] Return structured output via Pydantic: `DimensionScore` with `result`, `confidence`, `reason` per dimension
+- [x] Test scorer in isolation with `python -m eff.scorer "story text"` — no MCP involved
 - [x] Iterate on prompts until scoring feels consistent and defensible
-- [ ] Handle errors gracefully (API timeout, malformed response, missing key)
+- [x] Handle errors gracefully (API timeout 30s, malformed response, missing key)
 
-_Output: working `scorer.py` you can test with `python` directly_
+_Output: working `eff/scorer.py` you can test with `python` directly_
 
 ---
 
 ## Phase 4 — MCP Server (Wrap the Scorer)
 
-- [x] Create `eff_mcp/server.py` using FastMCP
-- [x] Load `dimensions.json` at startup
-- [x] Expose `ethics_filter(content, dimensions)` as an MCP tool
+- [x] Create `eff/server.py` using FastMCP
+- [x] Load `dimensions.json` per call via `score_story()`
+- [x] Expose `ethics_filter(user_story)` as an MCP tool (returns scores + enhanced story + acceptance criteria)
 - [x] Expose `eff://dimensions` as an MCP resource
 - [x] Expose `eff://skill` as an MCP resource (serves `SKILL.md`)
 - [x] Expose `eff://examples` as an MCP resource (serves `examples.md`)
-- [x] Test: run server locally via `python -m eff_mcp.server`
+- [x] Test: run server locally via `python -m eff.server`
 - [x] Test: connect to Claude Desktop or another MCP host via stdio config
 
 _Output: working local MCP server, testable in a real agent environment_
@@ -56,28 +56,32 @@ _Output: working local MCP server, testable in a real agent environment_
 
 - [x] Config via environment variables:
   - `OPENAI_API_KEY` (required)
-- [x] Write `pyproject.toml` — package name, entrypoint, dependencies
-- [x] Write `server.json` — MCP registry manifest with namespace `io.github.yourusername/eff-mcp`
-- [x] Confirm entrypoint: `python -m eff.server` works after `pip install -e .`
+  - `OPENAI_MODEL` (optional, default: `gpt-5.4-mini`)
+  - `OPENAI_BASE_URL` (optional, for Azure / local providers)
+  - `EFF_RETRIEVAL_PROVIDER` (optional, `none` or `supabase`)
+  - `SUPABASE_URL`, `SUPABASE_KEY` (required if using supabase retriever)
+- [x] Write `pyproject.toml` — package name, entrypoint, dependencies, optional `[rag]` and `[dev]` extras
+- [x] Write `server.json` — MCP registry manifest with namespace `io.github.vajosekulic/eff-mcp`
+- [x] Confirm entrypoint: `eff-mcp` console script works after `pip install -e .`
 
 ---
 
 ## Phase 6 — Quality and Robustness
 
-- [x] Write at least one test per dimension in `tests/`
-- [x] Test edge cases: empty story, missing rubric key, API failure
-- [x] Confirm scorer returns valid JSON even when model output is malformed
-- [x] Confirm server starts cleanly with missing optional env vars
-- [x] Confirm server fails clearly with missing required env vars (not silently)
+- [ ] Write at least one test per dimension edge case in `tests/` (e.g. empty story, story that clearly passes all)
+- [ ] Test edge cases: empty story, missing rubric key, API failure (mock provider raising exception)
+- [ ] Confirm server starts cleanly with missing optional env vars
+- [x] Confirm server fails clearly with missing required env vars (not silently) — `EnvironmentError` raised, logged, returned as structured `{"error": ...}`
 
 ---
 
 ## Phase 7 — Documentation Finalization
 
 - [x] Update README Quickstart with final package name and exact commands
-- [x] Fix research citation — verify author name and year before publishing
-- [x] Add `CONTRIBUTING.md` if open to external contributions
+- [ ] Fix research citation — verify author names and year before publishing
+- [ ] Add `CONTRIBUTING.md` if open to external contributions
 - [x] Add `LICENSE` file
+- [ ] Add `CHANGELOG.md` (start with `v0.1.0`)
 
 ---
 
@@ -94,7 +98,8 @@ _Output: working local MCP server, testable in a real agent environment_
 
 ## Deferred / v2
 
-- [ ] Support additional model providers (Anthropic, Azure OpenAI, Ollama)
+- [ ] Define severity tiers — same dimension, different weight per context (e.g. health data vs. chat)
+- [ ] Support additional model providers (Anthropic, Azure OpenAI, Ollama) — seam already built in `eff/providers.py`
 - [ ] Add remote HTTP transport (Streamable HTTP) for hosted deployment
 - [ ] Consider BYOK pass-through pattern for multi-tenant use
 - [ ] Extend dimensions — allow custom rubrics via config

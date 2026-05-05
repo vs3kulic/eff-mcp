@@ -1,19 +1,17 @@
 # -*- coding: utf-8 -*-
 """This module contains the FastMCP server implementation for the EFF scorer."""
+import logging
+import sys
 from pathlib import Path
-
 from fastmcp import FastMCP
+from eff.scorer import score_story, DEFAULT_DIMENSIONS_PATH, DEFAULT_MODEL
 
-from .rewriter import rewrite_story
-from .scorer import DEFAULT_DIMENSIONS_PATH, DEFAULT_MODEL, score_story
+RESOURCES_PATH = Path(__file__).resolve().parent / "resources"
 
-# Resource file paths
-RESOURCES_PATH = Path(__file__).resolve().parent.parent / "resources"
-
+logger = logging.getLogger("eff")
 
 def read_resource(filename: str) -> str:
     return (RESOURCES_PATH / filename).read_text(encoding="utf-8")
-
 
 mcp = FastMCP("eff-mcp")
 
@@ -25,17 +23,18 @@ mcp = FastMCP("eff-mcp")
 @mcp.tool()
 def ethics_filter(user_story: str) -> dict:
     """Run the Ethics Filter Framework on a user story."""
-    return score_story(
-        content=user_story,
-        dimensions_path=DEFAULT_DIMENSIONS_PATH,
-        model=DEFAULT_MODEL,
-    )
-
-
-@mcp.tool()
-def eff_rewrite(user_story: str, scoring_result: dict) -> dict:
-    """Rewrite a user story using the EFF scoring result."""
-    return rewrite_story(user_story, scoring_result)
+    try:
+        return score_story(
+            content=user_story,
+            dimensions_path=DEFAULT_DIMENSIONS_PATH,
+            model=DEFAULT_MODEL,
+        )
+    except EnvironmentError as exc:
+        logger.error("Configuration error: %s", exc)
+        return {"error": "configuration_error", "detail": str(exc)}
+    except Exception as exc:
+        logger.exception("ethics_filter failed")
+        return {"error": "internal_error", "detail": str(exc)}
 
 
 @mcp.tool()
@@ -74,5 +73,14 @@ def get_examples():
     return read_resource("examples.md")
 
 
-if __name__ == "__main__":
+def main() -> None:
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(name)s %(levelname)s %(message)s",
+        stream=sys.stderr,
+    )
     mcp.run()
+
+
+if __name__ == "__main__":
+    main()

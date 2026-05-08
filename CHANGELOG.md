@@ -5,6 +5,27 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] — 2026-05-08
+
+### Added
+
+- **`get_skill_instructions` MCP tool** — exposes `eff://skill` as a callable
+  tool so MCP hosts that never issue `resources/read` (e.g. Claude Desktop)
+  can still retrieve the EFF system-prompt block in a regular tool call.
+- **`get_dimensions_rubric` MCP tool** — exposes `eff://dimensions` as a tool,
+  returning the full rubric JSON on demand.
+- **`get_examples` MCP tool** — exposes `eff://examples` as a tool, returning
+  worked transformations and templates on demand.
+- **Python 3.13 CI support** — GitHub Actions matrix extended to
+  `["3.11", "3.12", "3.13"]`.
+
+### Changed
+
+- internal resource handler renamed from `get_examples` to `get_examples_resource`
+  to avoid a name collision with the new `get_examples` tool.
+
+---
+
 ## [0.1.0] — 2026-05-08
 
 First public release of the EFF MCP server.
@@ -59,4 +80,5 @@ First public release of the EFF MCP server.
   `[indexing]` extra (`pip install -e '.[indexing]'`) to use the PDF indexing
   script.
 
+[0.2.0]: https://github.com/vs3kulic/eff-mcp/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/vs3kulic/eff-mcp/releases/tag/v0.1.0

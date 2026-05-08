@@ -66,12 +66,21 @@ EFF operationalizes five core ethical dimensions derived from IEEE 7000:
 
 ## How EFF is Exposed via MCP
 
-This repository exposes EFF as an MCP-compatible capability. Agents can:
+This repository exposes EFF as an MCP-compatible capability via the following tools:
 
-- Integrate EFF refinement into their requirements engineering workflows
-- Retrieve EFF instructions and ethical dimension definitions
-- Access example transformations and acceptance criteria templates
-- Invoke evaluation logic for draft stories or requirements
+| Tool | Description |
+| ---- | ----------- |
+| `ethics_filter` | Scores a User Story across the five EFF dimensions, returns an enhanced story with a harm clause and measurable acceptance criteria. Requires `OPENAI_API_KEY`. |
+| `list_resources` | Lists the URIs and descriptions of available EFF resources. |
+| `get_skill_instructions` | Returns the EFF skill instructions and agent workflow (`eff://skill`). |
+| `get_dimensions_rubric` | Returns the full EFF rubric and dimension definitions as JSON (`eff://dimensions`). |
+| `get_examples` | Returns worked transformation examples and acceptance-criteria templates (`eff://examples`). |
+
+Resources are also exposed under the `eff://` URI scheme (`eff://skill`,
+`eff://dimensions`, `eff://examples`) for MCP hosts that support
+`resources/read`. The three `get_*` tools above are provided as a fallback for
+hosts that call `resources/list` but never `resources/read` (e.g. Claude
+Desktop).
 
 ---
 
@@ -169,9 +178,10 @@ source .venv/bin/activate   # if not already active
 fastmcp dev inspector eff/server.py
 ```
 
-Resources (`eff://dimensions`, `eff://skill`, `eff://examples`) work without an
-API key. Tools (`ethics_filter`, `list_resources`) require `OPENAI_API_KEY` to
-be set in your shell.
+The resource-reader tools (`get_skill_instructions`, `get_dimensions_rubric`,
+`get_examples`, `list_resources`) and the `eff://` resources work without an
+API key. Only `ethics_filter` requires `OPENAI_API_KEY` to be set in your
+shell.
 
 ### Claude Code (VS Code extension)
 

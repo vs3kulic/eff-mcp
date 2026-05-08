@@ -22,8 +22,8 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-rag = []
 dev = ["pytest>=7.0"]
+indexing = ["pypdf>=4.0.0"]
 
 [project.scripts]
 eff-mcp = "eff.server:main"
@@ -37,3 +37,7 @@ include = ["eff*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+addopts = "-m 'not integration'"
+markers = [
+	"integration: tests that require real external services (OpenAI, Supabase) — run with: pytest -m integration",
+]

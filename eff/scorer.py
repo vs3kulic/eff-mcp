@@ -47,6 +47,12 @@ class ScoreSummary(BaseModel):
     failed: int
 
 
+class Source(BaseModel):
+    snippet: str
+    source: str
+    score: float
+
+
 class ScoreResponse(BaseModel):
     content: str
     model: str
@@ -54,6 +60,14 @@ class ScoreResponse(BaseModel):
     summary: ScoreSummary
     enhanced_story: str
     acceptance_criteria: list[AcceptanceCriterion]
+    sources: list[Source] = []
+
+
+def _make_snippet(text: str, max_chars: int = 150) -> str:
+    cleaned = " ".join(text.split())
+    if len(cleaned) <= max_chars:
+        return cleaned
+    return cleaned[:max_chars].rstrip() + "…"
 
 
 def load_dimensions(dimensions_path: str) -> dict:
@@ -170,6 +184,15 @@ def call_model(content: str, dimensions: dict, model: str = DEFAULT_MODEL) -> Sc
         failed=sum(1 for x in results.model_dump().values() if x["result"] == "fail"),
     )
 
+    sources = [
+        Source(
+            snippet=_make_snippet(chunk.text),
+            source=chunk.source,
+            score=chunk.score,
+        )
+        for chunk in context
+    ]
+
     return ScoreResponse(
         content=content,
         model=model,
@@ -177,6 +200,7 @@ def call_model(content: str, dimensions: dict, model: str = DEFAULT_MODEL) -> Sc
         summary=summary,
         enhanced_story=parsed.enhanced_story,
         acceptance_criteria=parsed.acceptance_criteria,
+        sources=sources,
     )
 
 

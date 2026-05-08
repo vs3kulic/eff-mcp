@@ -51,6 +51,24 @@ def list_resources() -> dict:
         ]
     }
 
+
+@mcp.tool()
+def get_skill_instructions() -> str:
+    """Return the EFF skill instructions and workflow (eff://skill)."""
+    return read_resource("SKILL.md")
+
+
+@mcp.tool()
+def get_dimensions_rubric() -> str:
+    """Return the EFF rubric and dimension definitions (eff://dimensions)."""
+    return read_resource("dimensions.json")
+
+
+@mcp.tool()
+def get_examples() -> str:
+    """Return the EFF worked examples and templates (eff://examples)."""
+    return read_resource("examples.md")
+
 #################
 # MCP Resources #
 #################
@@ -68,7 +86,7 @@ def get_skill():
 
 
 @mcp.resource("eff://examples")
-def get_examples():
+def get_examples_resource():
     """Serve the EFF examples.md as an MCP resource."""
     return read_resource("examples.md")
 

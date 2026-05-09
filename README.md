@@ -1,4 +1,4 @@
-![Status](https://img.shields.io/badge/status-active-brightgreen)
+[![PyPI](https://img.shields.io/pypi/v/eff-mcp.svg)](https://pypi.org/project/eff-mcp/)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Python](https://img.shields.io/badge/python-3.11%2B-blueviolet)
 ![FastMCP](https://img.shields.io/badge/FastMCP-ready-orange)
@@ -89,9 +89,35 @@ Desktop).
 > **This server is self-hosted. Each deployment uses its own model provider
 > credentials — this repository does not provide hosted inference.**
 
-**Prerequisites:** Python 3.11+ and an OpenAI-compatible API key.
+**Prerequisites:** an OpenAI API key (or an OpenAI-compatible endpoint via
+`OPENAI_BASE_URL`). For the recommended install you also need [`uv`](https://docs.astral.sh/uv/getting-started/installation/);
+for the from-source install you need Python 3.11+.
 
-### Option A — Install from source (current)
+### Option A — Run via `uvx` (recommended)
+
+No clone, no virtualenv, no Python toolchain to manage — `uvx` fetches the
+package from PyPI and runs the server on demand. Add this to your MCP host
+config (Claude Desktop, Claude Code `.mcp.json`, Cursor, OpenClaw, …):
+
+```json
+{
+  "mcpServers": {
+    "eff": {
+      "command": "uvx",
+      "args": ["eff-mcp"],
+      "env": {
+        "OPENAI_API_KEY": "sk-...",
+        "OPENAI_MODEL": "gpt-5.4-mini"
+      }
+    }
+  }
+}
+```
+
+Reload your MCP host. First start downloads the package and creates an
+isolated environment (~5–10 s); subsequent starts are instant.
+
+### Option B — Install from source (for contributors / hacking on the server)
 
 ```bash
 git clone https://github.com/vs3kulic/eff-mcp
@@ -101,38 +127,13 @@ source .venv/bin/activate
 pip install -e .
 ```
 
-This creates a local virtual environment and installs the `eff-mcp` console
-script into it. The `.venv/` folder is gitignored — every developer creates
-their own.
-
-### Option B — Run via `uvx`
-
-No clone, no virtualenv — `uvx` fetches and runs the server on demand:
+Then point your MCP host at the local console script:
 
 ```json
 {
   "mcpServers": {
     "eff": {
-      "command": "uvx",
-      "args": ["eff-mcp"],
-      "env": {
-        "OPENAI_API_KEY": "sk-..."
-      }
-    }
-  }
-}
-```
-
-### MCP host configuration
-
-For stdio-based hosts (Claude Desktop, Cursor, OpenClaw, etc.) using the source
-install:
-
-```json
-{
-  "mcpServers": {
-    "eff": {
-      "command": "eff-mcp",
+      "command": "/absolute/path/to/.venv/bin/eff-mcp",
       "env": {
         "OPENAI_API_KEY": "sk-...",
         "OPENAI_MODEL": "gpt-5.4-mini"
@@ -141,6 +142,10 @@ install:
   }
 }
 ```
+
+The `.venv/` folder is gitignored — every developer creates their own.
+
+### Notes on credentials
 
 Pass credentials via the `env` block — most MCP hosts do not inherit your shell
 environment, so `export OPENAI_API_KEY=...` in `.zshrc` will not be visible to
@@ -357,6 +362,186 @@ Optional flags:
 - `--overlap N` (default: 200)
 - `--batch-size N` (default: 50, embeddings per API call)
 - `--clear` (delete existing rows before indexing — useful for re-indexing)
+
+---
+
+## Severity (Optional)
+
+By default, EFF reports a binary-ish result per dimension (`pass` /
+`Needs Improvement` / `fail`) without weighing how serious that result is in
+the application's actual context. A Privacy concern in a patient-facing
+health app is not the same as the same concern in a casual chat tool — the
+severity is context-dependent.
+
+When the caller passes a `context` string to `ethics_filter`, the LLM
+additionally classifies the severity of any non-pass result as `low`,
+`medium`, or `high` in that context.
+
+**Usage from an MCP host:**
+
+```
+ethics_filter(
+  user_story="As a patient, I want personalised dietary recommendations.",
+  context="patient-facing health app handling dietary and medical history"
+)
+```
+
+**Output shape:**
+
+```json
+{
+  "results": {
+    "privacy": {
+      "result": "fail",
+      "confidence": 0.92,
+      "reason": "Health data retention is not specified.",
+      "severity": "high"
+    },
+    "fairness": {
+      "result": "pass",
+      "confidence": 0.85,
+      "reason": "...",
+      "severity": null
+    }
+  }
+}
+```
+
+**Rules:**
+
+- Severity is `null` when `result` is `pass` (nothing to grade).
+- Severity is `null` for every dimension when no `context` is given (default).
+- Severity is independent of `confidence` — confidence measures how sure the
+  evaluator is, severity measures how serious the concern is.
+
+This is useful for triage: the same `Needs Improvement` rating is a low-
+priority backlog item in one product and a sprint-blocker in another.
+
+---
+
+## Custom Dimensions (Optional)
+
+The 5 built-in EFF dimensions (Utility, Fairness, Privacy, Explainability,
+Safety) are non-negotiable — they are the core of the methodology. But teams
+in specific domains often need additional dimensions: sustainability,
+accessibility, regulatory compliance, security posture, etc.
+
+Custom dimensions **extend** the built-ins; they cannot replace them. Once
+configured, the LLM scores them alongside the 5 defaults and they appear in
+the response under `custom_results`.
+
+**Define your extras in a JSON file** with the same shape as the built-in
+rubric:
+
+```json
+{
+  "dimensions": {
+    "sustainability": {
+      "description": "The feature's long-term environmental and resource impact.",
+      "rubric": {
+        "pass": "Resource use is bounded and proportionate to value delivered.",
+        "fail": "The feature creates substantial unbounded resource consumption.",
+        "borderline": "Resource impact is unclear or only partially mitigated."
+      },
+      "scoring_notes": [
+        "Consider compute, storage, energy, and lifecycle effects.",
+        "Be conservative when telemetry is missing."
+      ]
+    },
+    "accessibility": {
+      "description": "Equitable usability across abilities, devices, and contexts.",
+      "rubric": {
+        "pass": "Meets WCAG 2.2 AA across primary flows.",
+        "fail": "Excludes users with common assistive needs.",
+        "borderline": "Partial coverage; key flows untested."
+      },
+      "scoring_notes": ["Assess against WCAG 2.2 AA where applicable."]
+    }
+  }
+}
+```
+
+**Naming rules:**
+
+- Names must be unique and not collide with the 5 built-ins.
+- Names must be valid Python identifiers (letters, digits, underscores; no
+  spaces, no leading digit) so they can become Pydantic field names.
+
+**Enable via `EFF_EXTRA_DIMENSIONS_PATH`:**
+
+```json
+{
+  "mcpServers": {
+    "eff": {
+      "command": "eff-mcp",
+      "env": {
+        "OPENAI_API_KEY": "sk-...",
+        "EFF_EXTRA_DIMENSIONS_PATH": "/etc/eff/extras.json"
+      }
+    }
+  }
+}
+```
+
+**Output shape:** the response keeps `results` as the typed 5 built-ins, and
+adds a `custom_results` map for the extras:
+
+```json
+{
+  "results": { "utility": {...}, "fairness": {...}, ... },
+  "custom_results": {
+    "sustainability": { "result": "Needs Improvement", "confidence": 0.8, "reason": "..." },
+    "accessibility": { "result": "pass", "confidence": 0.9, "reason": "..." }
+  },
+  "summary": { "passed": 5, "needs_improvement": 1, "failed": 0 }
+}
+```
+
+The summary counts include both built-in and custom dimensions.
+
+---
+
+## Audit Logging (Optional)
+
+EFF can record every successful `ethics_filter` invocation as an append-only
+JSONL file. Each line captures the original story, the model used, the
+per-dimension scores, the enhanced story, the acceptance criteria, the
+retrieved sources, and a UTC timestamp.
+
+This is intended as an auditable trail — the methodology is built around
+defensible, reviewable refinement decisions, and the log lets a team show
+*"this is the exact evaluation that produced this enhanced story"* months
+later.
+
+**Enable by setting one environment variable:**
+
+```json
+{
+  "mcpServers": {
+    "eff": {
+      "command": "eff-mcp",
+      "env": {
+        "OPENAI_API_KEY": "sk-...",
+        "EFF_AUDIT_LOG_PATH": "/var/log/eff/audit.jsonl"
+      }
+    }
+  }
+}
+```
+
+The directory is created if it does not exist. The file is opened in append
+mode, so concurrent invocations append safely line-by-line.
+
+**Disabled by default:** if `EFF_AUDIT_LOG_PATH` is unset, no file is written
+and there is no overhead. Failures while writing the log are logged to stderr
+but never propagate to the MCP host — an audit failure must not break a
+scoring call.
+
+**Inspecting entries:**
+
+```bash
+tail -n 1 /var/log/eff/audit.jsonl | jq .
+```
 
 ---
 

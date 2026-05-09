@@ -29,6 +29,9 @@ htmlcov/
 # Local paper corpus for RAG indexing (user-specific, often copyrighted)
 papers/
 
+# EFF audit log (runtime data, may contain sensitive user stories)
+*.jsonl
+
 # IDEs
 .vscode/
 .idea/

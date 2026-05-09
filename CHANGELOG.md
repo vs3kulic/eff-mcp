@@ -18,11 +18,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   worked transformations and templates on demand.
 - **Python 3.13 CI support** — GitHub Actions matrix extended to
   `["3.11", "3.12", "3.13"]`.
+- **Retrieval seam** ([eff/retrieval.py](eff/retrieval.py)) — `Retriever`
+  Protocol with `NullRetriever` (default, no RAG) and `SupabaseRetriever`
+  (pgvector + OpenAI embeddings).
+- **Optional RAG over source literature** — when `EFF_RETRIEVAL_PROVIDER=supabase`
+  is set, retrieved passages are injected into the scoring prompt and the LLM
+  is instructed to cite them. Each response includes a `sources` array with
+  snippets so citation markers (`[1]`, `[5]`, …) are traceable.
+- **PDF indexing script** ([scripts/index_papers.py](scripts/index_papers.py)) —
+  extracts, chunks, embeds, and inserts a folder of PDFs into the Supabase
+  `documents` table. Reads credentials from `.env`.
 
 ### Changed
 
 - internal resource handler renamed from `get_examples` to `get_examples_resource`
   to avoid a name collision with the new `get_examples` tool.
+
+### Server hardening
+
+- 30-second timeout on the OpenAI client.
+- Structured error responses (`{"error": ..., "detail": ...}`) for
+  configuration and runtime failures, instead of bubbling raw exceptions to
+  the MCP host.
+- Logging on stderr (stdout is the MCP transport — must remain clean).
 
 ---
 
@@ -42,33 +60,15 @@ First public release of the EFF MCP server.
 - **Provider seam** ([eff/providers.py](eff/providers.py)) — `LLMProvider`
   Protocol and `OpenAIProvider` implementation. Other providers (Anthropic,
   Gemini, Azure, Ollama) plug in via a single branch in `get_provider()`.
-- **Retrieval seam** ([eff/retrieval.py](eff/retrieval.py)) — `Retriever`
-  Protocol with `NullRetriever` (default, no RAG) and `SupabaseRetriever`
-  (pgvector + OpenAI embeddings).
-- **Optional RAG over source literature** — when `EFF_RETRIEVAL_PROVIDER=supabase`
-  is set, retrieved passages are injected into the scoring prompt and the LLM
-  is instructed to cite them. Each response includes a `sources` array with
-  snippets so citation markers (`[1]`, `[5]`, …) are traceable.
-- **PDF indexing script** ([scripts/index_papers.py](scripts/index_papers.py)) —
-  extracts, chunks, embeds, and inserts a folder of PDFs into the Supabase
-  `documents` table. Reads credentials from `.env`.
 - **Console script** — `eff-mcp` registered via `pyproject.toml` for direct
   invocation by MCP hosts.
-- **Tests** — 38 hermetic unit tests (no network) and 2 opt-in integration
+- **Tests** — 38 unit tests (no network) and 2 opt-in integration
   tests (`pytest -m integration`) against real OpenAI and Supabase.
 - **CI** — GitHub Actions runs the unit suite on Python 3.11 and 3.12 for every
   push and pull request.
 - **Documentation** — README covers quickstart, MCP host configuration, local
   development with the FastMCP inspector and `.mcp.json`, RAG setup with the
   Supabase schema and RLS policy guidance, and downstream code generation.
-
-### Server hardening
-
-- 30-second timeout on the OpenAI client.
-- Structured error responses (`{"error": ..., "detail": ...}`) for
-  configuration and runtime failures, instead of bubbling raw exceptions to
-  the MCP host.
-- Logging on stderr (stdout is the MCP transport — must remain clean).
 
 ### Notes
 

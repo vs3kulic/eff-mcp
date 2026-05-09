@@ -6,13 +6,23 @@ Usage:
 Reads credentials from environment (or from .env in project root):
     OPENAI_API_KEY, SUPABASE_URL, SUPABASE_KEY
 
-Optional flags:
-    --chunk-size N       Characters per chunk (default: 1000)
-    --overlap N          Character overlap between chunks (default: 200)
-    --batch-size N       Embeddings per API call (default: 50)
-    --clear              Delete all rows from documents table before indexing
+Optional environment variables:
+    OPENAI_EMBEDDING_MODEL — embedding model (default: text-embedding-3-small)
 
-Requires: pip install -e '.[rag,indexing]'
+Optional flags:
+    --chunk-size N         Characters per chunk (default: 1000)
+    --overlap N            Character overlap between chunks (default: 200)
+    --batch-size N         Embeddings per API call (default: 50)
+    --embedding-model M    Override embedding model
+    --clear                Delete all rows from documents table before indexing
+
+The embedding model used here MUST match the one configured for the server
+(`OPENAI_EMBEDDING_MODEL`). Otherwise retrieval will return garbage because the
+embedding spaces do not align. The model dimension must also match the
+`vector(N)` column in the Supabase schema (1536 for text-embedding-3-small,
+3072 for text-embedding-3-large).
+
+Requires: pip install -e '.[indexing]'
 """
 from __future__ import annotations
 
@@ -29,7 +39,7 @@ from supabase import create_client
 DEFAULT_CHUNK_SIZE = 1000
 DEFAULT_OVERLAP = 200
 DEFAULT_BATCH_SIZE = 50
-EMBEDDING_MODEL = "text-embedding-3-small"
+DEFAULT_EMBEDDING_MODEL = "text-embedding-3-small"
 
 
 def extract_text(pdf_path: Path) -> str:
@@ -56,8 +66,10 @@ def chunk_text(text: str, size: int, overlap: int) -> list[str]:
     return chunks
 
 
-def embed_batch(client: OpenAI, texts: list[str]) -> list[list[float]]:
-    response = client.embeddings.create(input=texts, model=EMBEDDING_MODEL)
+def embed_batch(
+    client: OpenAI, texts: list[str], embedding_model: str
+) -> list[list[float]]:
+    response = client.embeddings.create(input=texts, model=embedding_model)
     return [item.embedding for item in response.data]
 
 
@@ -68,6 +80,7 @@ def index_pdf(
     chunk_size: int,
     overlap: int,
     batch_size: int,
+    embedding_model: str,
 ) -> int:
     print(f"  Extracting text from {pdf_path.name}...")
     text = extract_text(pdf_path)
@@ -81,7 +94,7 @@ def index_pdf(
     inserted = 0
     for i in range(0, len(chunks), batch_size):
         batch = chunks[i:i + batch_size]
-        embeddings = embed_batch(openai_client, batch)
+        embeddings = embed_batch(openai_client, batch, embedding_model)
         rows = [
             {"content": content, "source": pdf_path.name, "embedding": embedding}
             for content, embedding in zip(batch, embeddings)
@@ -94,6 +107,8 @@ def index_pdf(
 
 
 def main() -> None:
+    load_dotenv()
+
     parser = argparse.ArgumentParser(
         description="Index PDFs into Supabase for EFF RAG."
     )
@@ -102,13 +117,20 @@ def main() -> None:
     parser.add_argument("--overlap", type=int, default=DEFAULT_OVERLAP)
     parser.add_argument("--batch-size", type=int, default=DEFAULT_BATCH_SIZE)
     parser.add_argument(
+        "--embedding-model",
+        default=os.getenv("OPENAI_EMBEDDING_MODEL", DEFAULT_EMBEDDING_MODEL),
+        help=(
+            "OpenAI embedding model to use. Defaults to env OPENAI_EMBEDDING_MODEL "
+            f"or {DEFAULT_EMBEDDING_MODEL!r} if unset. Must match the model used "
+            "by the server and the dimension of the Supabase vector column."
+        ),
+    )
+    parser.add_argument(
         "--clear",
         action="store_true",
         help="Delete all rows from documents table before indexing",
     )
     args = parser.parse_args()
-
-    load_dotenv()
 
     papers_dir = Path(args.path)
     if not papers_dir.is_dir():
@@ -133,6 +155,7 @@ def main() -> None:
         sb_client.table("documents").delete().neq("id", 0).execute()
 
     print(f"Found {len(pdfs)} PDFs in {papers_dir}")
+    print(f"Using embedding model: {args.embedding_model}")
 
     total = 0
     failed: list[str] = []
@@ -146,6 +169,7 @@ def main() -> None:
                 args.chunk_size,
                 args.overlap,
                 args.batch_size,
+                args.embedding_model,
             )
         except Exception as exc:
             print(f"  ! Failed: {type(exc).__name__}: {exc}", file=sys.stderr)

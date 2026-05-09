@@ -105,7 +105,7 @@ This creates a local virtual environment and installs the `eff-mcp` console
 script into it. The `.venv/` folder is gitignored — every developer creates
 their own.
 
-### Option B — Run via `uvx` _(coming soon — pending PyPI publish)_
+### Option B — Run via `uvx`
 
 No clone, no virtualenv — `uvx` fetches and runs the server on demand:
 

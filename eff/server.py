@@ -21,13 +21,39 @@ mcp = FastMCP("eff-mcp")
 #############
 
 @mcp.tool()
-def ethics_filter(user_story: str) -> dict:
-    """Run the Ethics Filter Framework on a user story."""
+def ethics_filter(user_story: str, context: str | None = None) -> dict:
+    """Run the Ethics Filter Framework on a user story.
+
+    Args:
+        user_story: The user story to evaluate (standard agile format).
+        context: Optional short description of the application domain
+            (e.g. "patient-facing health app", "internal admin tool").
+            When provided, every dimension's severity field is set to
+            low / medium / high in this context. When omitted, severity is null.
+
+    Server-level configuration (set via env at MCP host startup, not per call):
+        OPENAI_API_KEY (required) — model provider credential.
+        OPENAI_MODEL (optional, default "gpt-5.4-mini") — model override.
+        OPENAI_BASE_URL (optional) — for OpenAI-compatible endpoints.
+        EFF_RETRIEVAL_PROVIDER (optional) — "supabase" enables RAG; default off.
+        SUPABASE_URL, SUPABASE_KEY — required when RAG is enabled.
+        EFF_EXTRA_DIMENSIONS_PATH (optional) — path to a JSON file with extra
+            domain-specific dimensions; scored alongside the 5 built-ins.
+        EFF_AUDIT_LOG_PATH (optional) — path to a JSONL audit log; one row per
+            successful invocation. Disabled by default.
+
+    Returns:
+        A dict with the per-dimension scores, an enhanced story, acceptance
+        criteria, a summary count, and (when RAG is enabled) retrieved sources.
+        On configuration or runtime failure, returns
+        {"error": "...", "detail": "..."} instead.
+    """
     try:
         return score_story(
             content=user_story,
             dimensions_path=DEFAULT_DIMENSIONS_PATH,
             model=DEFAULT_MODEL,
+            context=context,
         )
     except EnvironmentError as exc:
         logger.error("Configuration error: %s", exc)

@@ -1,0 +1,31 @@
+{
+  "dimensions": {
+    "sustainability": {
+      "description": "The feature's long-term environmental and resource impact across compute, storage, energy, and lifecycle effects.",
+      "rubric": {
+        "pass": "Resource use is bounded and proportionate to the value delivered. Lifecycle impact (storage retention, compute footprint, hardware demand) is documented or measurable.",
+        "fail": "The feature creates substantial unbounded resource consumption, or relies on practices known to be environmentally harmful, with no mitigations.",
+        "borderline": "Resource impact is unclear, only partially mitigated, or relies on assumptions that have not been validated."
+      },
+      "scoring_notes": [
+        "Consider compute, storage, network, and lifecycle effects together — not just runtime cost.",
+        "Be conservative when telemetry or actual measurements are missing.",
+        "A feature that scales linearly with users without bounded retention is rarely sustainable.",
+        "Default settings carry the most weight; an opt-in efficient mode does not redeem a wasteful default."
+      ]
+    },
+    "accessibility": {
+      "description": "Equitable usability across abilities, devices, languages, and contexts of use.",
+      "rubric": {
+        "pass": "Primary user flows meet WCAG 2.2 AA where applicable, work with keyboard-only and screen-reader navigation, and degrade gracefully on low-bandwidth or older devices.",
+        "fail": "The feature systematically excludes users with common assistive needs, low-bandwidth contexts, or non-default device classes.",
+        "borderline": "Partial coverage; key flows have not been tested against assistive technology, or accessibility is acknowledged but not enforced."
+      },
+      "scoring_notes": [
+        "Assess against WCAG 2.2 AA where applicable; do not require AAA unless the domain demands it.",
+        "Consider non-visual and motor disabilities, not only visual.",
+        "Mobile, low-bandwidth, and older devices are part of accessibility, not separate concerns."
+      ]
+    }
+  }
+}

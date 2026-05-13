@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] — 2026-05-13
+
+### Fixed
+
+- BibTeX integration: bib://<key> resources + search_citations() tool for academic reference lookup in MCP.
+- Fixed test suite imports for custom dimension and severity logic.
+- MCP resource endpoints for `eff://dimensions`, `bib://<key>`, and `search_citations` verified and tested.
+- Dependency fixes: ensured `bibtexparser` and `aiohttp` are required and installed.
+- PyPI packaging and versioning issues resolved.
+
+### Changed
+
+- Updated `pyproject.toml` version to 0.3.1.
+- Tagged and published release v0.3.1 to PyPI.
+
 ## [0.3.0] — 2026-05-09
 
 ### Added

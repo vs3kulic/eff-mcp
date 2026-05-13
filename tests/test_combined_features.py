@@ -15,9 +15,9 @@ from eff.retrieval import RetrievedChunk
 from eff.scorer import (
     AcceptanceCriterion,
     DimensionScore,
-    build_eff_output_class,
     call_model,
     load_dimensions,
+    build_eff_output_class,
 )
 
 DIMENSIONS_PATH = (

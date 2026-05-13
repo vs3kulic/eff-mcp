@@ -1,4 +1,4 @@
-[![PyPI](https://img.shields.io/pypi/v/eff-mcp.svg)](https://pypi.org/project/eff-mcp/)
+[![PyPI](https://img.shields.io/pypi/v/eff-mcp.svg?cacheSeconds=1)](https://pypi.org/project/eff-mcp/)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Python](https://img.shields.io/badge/python-3.11%2B-blueviolet)
 ![FastMCP](https://img.shields.io/badge/FastMCP-ready-orange)
